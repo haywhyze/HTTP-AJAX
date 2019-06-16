@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import styled from 'styled-components';
 
 const StyledForm = styled.form`
@@ -30,16 +30,75 @@ const StyledButton = styled.button`
   border-radius: .4rem;
 `
 
-export default () => (
-  <div>
-    <h1>Add New Friend</h1>
-    <StyledForm>
-      <StyledInput type='text' placeholder='Name'/>
-      <StyledInput type='number' placeholder='Number'/>
-      <StyledInput type='email' placeholder='Email'/>
-      <StyledButton>
-        Add Friend
-      </StyledButton>
-    </StyledForm>
-  </div>
-)
+export default class NewFriendForm extends Component {
+
+  state = {
+    name: '',
+    age: '',
+    email: '',
+  }
+
+  addNewFriend = (e) => {
+    e.preventDefault()
+    this.props.addNewFriend(this.state);
+  }
+
+  updateFriend = id => event => {
+    event.preventDefault()
+    this.props.updateFriend(this.state, id);
+  }
+
+  handleChange = input => event => {
+    this.setState({
+      [input]: event.target.value 
+    })
+  }
+
+  componentDidMount () {
+    const id = this.props.match.params.id;
+    let friend;
+    if (id) {
+      friend = this.props.friends.filter(friend => friend.id === Number(id))[0];
+    }
+
+    if (friend) this.setState({
+      name: friend.name,
+      age: friend.age,
+      email: friend.email
+    })
+  }
+
+  render() {
+    const id = this.props.match.params.id;
+    return (
+      <div>
+        {this.props.isLoading && (<p>...Loading</p>)}
+        <h1>{id ? 'Update Friend' : 'Add New Friend'}</h1>
+        <StyledForm onSubmit={this.addNewFriend}>
+          <StyledInput 
+            type='text' 
+            value={this.state.name} 
+            onChange={this.handleChange('name')} 
+            placeholder='Name'
+          />
+          <StyledInput 
+            type='number' 
+            value={this.state.age} 
+            onChange={this.handleChange('age')} 
+            placeholder='Age'
+          />
+          <StyledInput 
+            type='email' 
+            value={this.state.email} 
+            onChange={this.handleChange('email')} 
+            placeholder='Email'
+          />
+          <StyledButton onClick={id ? this.updateFriend(id) : this.addNewFriend}>
+            {id ? 'Update Friend' : 'Add New Friend'}
+          </StyledButton>
+        </StyledForm>
+      </div>
+    );
+  }
+}
+

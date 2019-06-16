@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const StyledFriend = styled.div`
@@ -34,10 +35,37 @@ const StyledEmail = styled.p`
   padding: .5rem;
 `
 
-export default ({ friend }) => (
+const StyledButton = styled.button`
+  padding: .75rem 1.5rem;
+  background: ${props => props.update ? 'rgb(0, 49, 116)' : "rgb(161, 21, 29)"};
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0,0,0, .5);
+  border-radius: .4rem;
+  margin: .5rem;
+  transition: all .2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+`
+
+export default ({ friend, deleteFriend }) => (
   <StyledFriend>
     <StyledName>{friend.name}</StyledName>
     <StyledAge>{friend.age} years</StyledAge>
     <StyledEmail>{friend.email}</StyledEmail>
+    <Link to={`/friends/${friend.id}`}>
+      <StyledButton update>Update</StyledButton> 
+    </Link>
+    <StyledButton onClick={() => deleteFriend(friend.id)}>Delete</StyledButton>
   </StyledFriend>
 );
